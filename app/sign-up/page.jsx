@@ -1,5 +1,135 @@
+'use client';
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '../../components/ui/card';
+import { Label } from '../../components/ui/label';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import Link from 'next/link';
+import { useState } from 'react';
+import { signUp } from '../../lib/auth/auth-client';
+import { useRouter } from 'next/navigation';
+
 export default function SignUp() {
-  return (
-    <h1>This is the sing up page</h1>
-  );
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState('');
+
+    const router = useRouter();
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        setError('');
+        setLoading(true);
+
+        try {
+            const res = await signUp.email({
+                name,
+                email,
+                password,
+            });
+
+            if (res.error) {
+                setError(res.error.message ?? 'Failed to sign up');
+            } else {
+                router.push('/dashboard');
+            }
+        } catch (error) {
+            setError('An error occurred:');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-white p-6 mb-6">
+            <Card className="w-full max-w-md border-gray-200 shadow-lg">
+                <CardHeader className="space-y-1">
+                    <CardTitle className="text-3xl font-bold text-black">Sign Up</CardTitle>
+                    <CardDescription className="text-lg text-gray-600">
+                        Create an account to start tracking your job applications
+                    </CardDescription>
+                </CardHeader>
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    <CardContent className="space-y-4">
+                        {error && (
+                            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                                {error}
+                            </div>
+                        )}
+                        <div className="space-y-2">
+                            <Label htmlFor="name" className="text-gray-700 text-lg">
+                                Name
+                            </Label>
+                            <Input
+                                id="name"
+                                type="text"
+                                placeholder="John Doe"
+                                required
+                                className="border-gray-300 focus:border-primary focus:ring-primary text-lg"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="email" className="text-gray-700 text-lg">
+                                Email
+                            </Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="johndoe@example.com"
+                                required
+                                className="border-gray-300 focus:border-primary focus:ring-primary text-lg"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password" className="text-gray-700 text-lg">
+                                Password
+                            </Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                placeholder="******"
+                                required
+                                className="border-gray-300 focus:border-primary focus:ring-primary text-lg"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                    </CardContent>
+                    <CardFooter className="flex flex-col space-y-4">
+                        <Button 
+                            type="submit" 
+                            className="w-full bg-primary hover:bg-primary/90 text-lg"
+                            disabled={loading}
+                            >
+                            {loading ? "Creating account ... " :  "Sign up"}
+                        </Button>
+                        <p className="text-center text-sm text-gray-600 text-lg">
+                            Already have an account?{' '}
+                            <Link
+                                href="/sign-in"
+                                className="font-medium text-primary hover:underline text-lg"
+                            >
+                                Sign in
+                            </Link>
+                        </p>
+                    </CardFooter>
+                </form>
+            </Card>
+        </div>
+    );
 }
