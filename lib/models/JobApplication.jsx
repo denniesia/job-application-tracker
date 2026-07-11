@@ -1,4 +1,3 @@
-import { Schema } from "better-auth";
 import mongoose from "mongoose";
 
 const JobApplicationSchema = new mongoose.Schema(
@@ -20,13 +19,13 @@ const JobApplicationSchema = new mongoose.Schema(
             default: "applied",
         },
         columnId: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Column",
             required: true,
             index: true,
         },
         boardId: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Board",
             required: true,
             index: true,

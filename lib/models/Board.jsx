@@ -13,7 +13,7 @@ const BoardSchema = new mongoose.Schema(
         },
         columns: [
             {
-                type: Schema.Types.ObjectId, 
+                type: mongoose.Schema.Types.ObjectId, 
                 ref: "Column",
             }
         ]

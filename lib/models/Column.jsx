@@ -7,7 +7,7 @@ const ColumnSchema = new mongoose.Schema(
             required: true,
         },
         boardId: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Board",
             required: true,
             index: true,
@@ -19,7 +19,7 @@ const ColumnSchema = new mongoose.Schema(
         },
         jobApplications: [
             {
-                type: Schema.Types.ObjectId, 
+                type: mongoose.Schema.Types.ObjectId, 
                 ref: "JobApplication",
             }
         ]
