@@ -7,9 +7,11 @@ import {
     DialogTrigger,
     DialogDescription,
     DialogTitle,
+    DialogFooter,
 } from './ui/dialog';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 
 export default function CreateJobApplicationDialog({ columnId, boardId }) {
     return (
@@ -77,7 +79,56 @@ export default function CreateJobApplicationDialog({ columnId, boardId }) {
                                 />
                             </div>
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="jobUrl">Job URL</Label>
+                                <Input
+                                    id="jobUrl"
+                                    placeholder="https://..."
+                                    // value={formData.salary}
+                                    // onChange={(e) =>
+                                    // setFormData({ ...formData, salary: e.target.value })
+                                    // }
+                                />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="tags">Tags (comma-separated)</Label>
+                                <Input
+                                    id="tags"
+                                    placeholder="React, Tailwind, High Pay"
+                                    // value={formData.salary}
+                                    // onChange={(e) =>
+                                    // setFormData({ ...formData, salary: e.target.value })
+                                    // }
+                                />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Description</Label>
+                                <Textarea
+                                    id="description"
+                                    placeholder="Brief description of the role"
+                                    rows={4}
+                                    // value={formData.salary}
+                                    // onChange={(e) =>
+                                    // setFormData({ ...formData, salary: e.target.value })
+                                    // }
+                                />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="notes">Notes</Label>
+                                <Textarea
+                                    rows={4}
+                                    id="notes"
+                                    // value={formData.salary}
+                                    // onChange={(e) =>
+                                    // setFormData({ ...formData, salary: e.target.value })
+                                    // }
+                                />
+                        </div>
                     </div>
+                    <DialogFooter>
+                        <Button type='button' variant="outline">Cancel</Button>
+                        <Button type='submit'>Add Application</Button>
+                    </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>
