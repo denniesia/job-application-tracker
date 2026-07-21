@@ -18,7 +18,10 @@ export default async function Dashboard() {
         userId: session.user.id,
         name: 'Job Hunt',
     }).populate({
-        path: "columns"
+        path: "columns",
+        populate: {
+            path: "jobApplications",
+        }
     })
     console.log(board);
 

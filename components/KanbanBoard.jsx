@@ -1,6 +1,15 @@
 'use client';
 
-import { Award, Calendar, CheckCircle2, Mic, MoreHorizontal, MoreVertical, Trash2, XCircle } from "lucide-react";
+import {
+    Award,
+    Calendar,
+    CheckCircle2,
+    Mic,
+    MoreHorizontal,
+    MoreVertical,
+    Trash2,
+    XCircle,
+} from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -18,83 +27,94 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import {
-   Button
-} from './ui/button';
-import CreateJobApplicationDialog from "./CreateJobApplicationDialog";
+import { Button } from './ui/button';
+import CreateJobApplicationDialog from './CreateJobApplicationDialog';
 
-
-
+import  JobApplicationCard  from './JobApplicationCard';
 
 const COLUMN_CONFIG = [
-  {
-    color: "bg-cyan-500",
-    icon: <Calendar className="h-4 w-4" />,
-  },
-  {
-    color: "bg-purple-500",
-    icon: <CheckCircle2 className="h-4 w-4" />,
-  },
-  {
-    color: "bg-green-500",
-    icon: <Mic className="h-4 w-4" />,
-  },
-  {
-    color: "bg-yellow-500",
-    icon: <Award className="h-4 w-4" />,
-  },
-  {
-    color: "bg-red-500",
-    icon: <XCircle className="h-4 w-4" />,
-  },
+    {
+        color: 'bg-cyan-500',
+        icon: <Calendar className="h-4 w-4" />,
+    },
+    {
+        color: 'bg-purple-500',
+        icon: <CheckCircle2 className="h-4 w-4" />,
+    },
+    {
+        color: 'bg-green-500',
+        icon: <Mic className="h-4 w-4" />,
+    },
+    {
+        color: 'bg-yellow-500',
+        icon: <Award className="h-4 w-4" />,
+    },
+    {
+        color: 'bg-red-500',
+        icon: <XCircle className="h-4 w-4" />,
+    },
 ];
 
-function DroppableColumn({column, config, boardId}) {
-   return (
-    <Card className="min-w-[300px] flex-shrink-0 shadow-md p-0">
-      <CardHeader
-        className={`${config.color} text-white rounded-t-lg pb-3 pt-3`}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {config.icon}
-            <CardTitle className="text-white text-base font-semibold">
-              {column.name}
-            </CardTitle>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-white hover:bg-white/20"
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem className="text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete Column
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+function DroppableColumn({ column, config, boardId, sortedColumns }) {
+    const sortedJobs = column.jobApplications?.sort((a, b) => a.order - b.order) || [];
+
+    return (
+        <Card className="min-w-[300px] flex-shrink-0 shadow-md p-0">
+            <CardHeader className={`${config.color} text-white rounded-t-lg pb-3 pt-3`}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        {config.icon}
+                        <CardTitle className="text-white text-base font-semibold">
+                            {column.name}
+                        </CardTitle>
+                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-white hover:bg-white/20"
+                            >
+                                <MoreVertical className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem className="text-destructive">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete Column
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </CardHeader>
+
+            <CardContent className={`space-y-2 pt-4 bg-gray-50/50 min-h-[400px] rounded-b-lg" }`}>
+                {sortedJobs.map((job, key) => 
+                    <SortableJobCard 
+                        key={key} 
+                        job={{...job, columnId: job.columnId || column._id}}
+                        columns={sortedColumns}
+
+                    />
+                )}
+                <CreateJobApplicationDialog columnId={column._id} boardId={boardId} />
+            </CardContent>
+        </Card>
+    );
+}
+
+function SortableJobCard ({job, columns}) {
+    return (
+        <div>
+            <JobApplicationCard job={job} columns={columns} />
         </div>
-      </CardHeader>
-
-      <CardContent
-        className={`space-y-2 pt-4 bg-gray-50/50 min-h-[400px] rounded-b-lg" }`}
-      >
-        <CreateJobApplicationDialog columnId={column._id} boardId={boardId}/>
-
-      
-      </CardContent>
-    </Card>
-  );
+    )
 }
 
 export default function KanbanBoard({ board, userId }) {
     const columns = board.columns;
+
+    const sortedColumns = columns?.sort((a, b) => a.order - b.order) || [];
 
     return (
         <>
@@ -102,17 +122,18 @@ export default function KanbanBoard({ board, userId }) {
                 <div>
                     {columns.map((col, key) => {
                         const config = COLUMN_CONFIG[key] || {
-                            color: "bg-gray-500",
+                            color: 'bg-gray-500',
                             icon: <Calendar className="h-4 w-4" />,
-                        }
+                        };
                         return (
                             <DroppableColumn
                                 key={key}
                                 column={col}
                                 config={config}
                                 boardId={board._id}
+                                sortedColumns={sortedColumns}
                             />
-                        )
+                        );
                     })}
                 </div>
             </div>
