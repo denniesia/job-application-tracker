@@ -45,7 +45,7 @@ export default function JobApplicationCard({job, columns}) {
                                     className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    <ExternalLink className="h-3 w-3" />
+                                    <ExternalLink className="h-5 w-5" />
                                 </a>
                             )}
                         </div>
@@ -61,7 +61,7 @@ export default function JobApplicationCard({job, columns}) {
                                         <Edit2 className="mr-2 h-4 w-4" />
                                         Edit
                                     </DropdownMenuItem>
-                                    {/* {columns.length > 1 && (
+                                    {columns.length > 1 && (
                                         <>
                                             {columns
                                                 .filter((c) => c._id !== job.columnId)
@@ -74,7 +74,7 @@ export default function JobApplicationCard({job, columns}) {
                                                     </DropdownMenuItem>
                                                 ))}
                                         </>
-                                    )} */}
+                                    )}
                                     <DropdownMenuItem
                                         className="text-destructive"
                                         onClick={() => handleDelete()}
