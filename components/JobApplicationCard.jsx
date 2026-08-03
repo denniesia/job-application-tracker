@@ -7,8 +7,21 @@ import {
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
+import { updateJobApplication } from '../lib/actions/job-application';
 
 export default function JobApplicationCard({job, columns}) {
+
+    async function handleMove(newColumnId) {
+        try {
+            const result = await updateJobApplication(job._id, {
+                columnId: newColumnId,
+            });
+
+        } catch (err) {
+            console.error("Failed to move job application", err);
+        }
+
+    }
     
     return (
         <>
