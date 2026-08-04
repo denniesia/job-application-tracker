@@ -9,7 +9,7 @@ import {
     DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
-import { updateJobApplication } from '../lib/actions/job-application';
+import { deleteJobApplication, updateJobApplication } from '../lib/actions/job-application';
 
 import { Plus } from 'lucide-react';
 
@@ -46,7 +46,7 @@ export default function JobApplicationCard({job, columns}) {
 
     async function handleUpdate(e) {
         e.preventDefault();
-        
+
         try {
             const result = await updateJobApplication(job._id, {
                 ...formData,
@@ -69,6 +69,19 @@ export default function JobApplicationCard({job, columns}) {
             const result = await updateJobApplication(job._id, {
                 columnId: newColumnId,
             });
+
+        } catch (err) {
+            console.error("Failed to move job application", err);
+        }
+
+    }
+    async function handleDelete(newColumnId) {
+        try {
+            const result = await deleteJobApplication(job._id);
+
+            if (result.error) {
+                console.error("Failed to delete jon application", result.error)
+            }
 
         } catch (err) {
             console.error("Failed to move job application", err);
