@@ -32,6 +32,9 @@ import CreateJobApplicationDialog from './CreateJobApplicationDialog';
 
 import  JobApplicationCard  from './JobApplicationCard';
 import useBoard from '../lib/hooks/useBoards';
+import { closestCorners, DndContext, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const COLUMN_CONFIG = [
     {
@@ -58,6 +61,14 @@ const COLUMN_CONFIG = [
 
 function DroppableColumn({ column, config, boardId, sortedColumns }) {
     const sortedJobs = column.jobApplications?.sort((a, b) => a.order - b.order) || [];
+    const { setNodeRef, isOver } = useDroppable({
+        id: column._id,
+        data: {
+            type: "column",
+            columnId: column._id
+        }
+    });
+
 
     return (
         <Card className="min-w-[300px] flex-shrink-0 shadow-md p-0">
@@ -89,7 +100,14 @@ function DroppableColumn({ column, config, boardId, sortedColumns }) {
                 </div>
             </CardHeader>
 
-            <CardContent className={`space-y-2 pt-4 bg-gray-50/50 min-h-[400px] rounded-b-lg" }`}>
+            <CardContent 
+                ref={setNodeRef} 
+                className={`space-y-2 pt-4 bg-gray-50/50 min-h-[400px] rounded-b-lg ${isOver ? "ring-2 ring-blue-500" : ""}`}
+            >
+                <SortableContext 
+                    items={sortedJobs.map((job) => job._id)} 
+                    strategy={verticalListSortingStrategy}
+                >
                 {sortedJobs.map((job, key) => 
                     <SortableJobCard 
                         key={key} 
@@ -98,6 +116,7 @@ function DroppableColumn({ column, config, boardId, sortedColumns }) {
 
                     />
                 )}
+                </SortableContext>
                 <CreateJobApplicationDialog columnId={column._id} boardId={boardId} />
             </CardContent>
         </Card>
@@ -105,21 +124,51 @@ function DroppableColumn({ column, config, boardId, sortedColumns }) {
 }
 
 function SortableJobCard ({job, columns}) {
+    const { attributes, listeners, transform, transition, isDragging, setNodeRef } = useSortable({
+        id: job._id,
+        data: {
+            type: "job",
+            job,
+        }
+    })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+    };
+
     return (
-        <div>
-            <JobApplicationCard job={job} columns={columns} />
+        <div ref={setNodeRef} style={style}>
+            <JobApplicationCard job={job} columns={columns}  dragHandleProps={{...attributes, ...listeners}}/>
         </div>
     )
 }
 
 export default function KanbanBoard({ board, userId }) {
     const {columns, moveJob} = useBoard(board)
-
+    const sensors = useSensors(useSensor(PointerSensor, {
+        activationConstraint: {
+            distance: 8,
+        }
+    } ))
 
     const sortedColumns = columns?.sort((a, b) => a.order - b.order) || [];
 
+    async function handleDragStart() {
+        
+    }
+    async function handleDragEnd() {
+
+    }
+
     return (
-        <>
+        <DndContext 
+            sensors={sensors} 
+            collisionDetection={closestCorners} 
+            onDragStart={handleDragStart} 
+            onDragEnd={handleDragEnd}
+        >
             <div>
                 <div>
                     {columns.map((col, key) => {
@@ -139,6 +188,6 @@ export default function KanbanBoard({ board, userId }) {
                     })}
                 </div>
             </div>
-        </>
+        </DndContext>
     );
 }

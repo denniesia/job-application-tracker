@@ -29,7 +29,7 @@ import { useState } from 'react';
 import { createJobApplication } from '../lib/actions/job-application';
 
 
-export default function JobApplicationCard({job, columns}) {
+export default function JobApplicationCard({job, columns, dragHandleProps}) {
     const [isEditing, setIsEditing] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -93,7 +93,7 @@ export default function JobApplicationCard({job, columns}) {
         <>
             <Card
                 className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm"
-             
+                {...dragHandleProps}
             >
                 <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-2">
